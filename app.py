@@ -20,30 +20,14 @@ import base64
 import re
 import os
 import uuid
-import sys
 
-# =====================================================
-# FIXED PATH HANDLING (WORKS FOR .py AND .exe)
-# =====================================================
-
-def get_base_path():
-    if getattr(sys, 'frozen', False):
-        # Running as executable
-        return os.path.dirname(sys.executable)
-    else:
-        # Running as script
-        return os.path.dirname(os.path.abspath(__file__))
-
-BASE_PATH = get_base_path()
-
-TEMPLATE_FOLDER = os.path.join(BASE_PATH, "templates")
-UPLOAD_FOLDER = os.path.join(BASE_PATH, "uploads")
-
-# Create uploads folder if missing
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
+app = Flask(__name__)
 app.secret_key = "cryptic_layer_secret"
+
+# ================= UPLOAD FOLDER =================
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ================= FILE VALIDATION =================
 
@@ -68,7 +52,7 @@ def validate_key(key):
     if not re.search(r"[a-z]", key):
         return "Need lowercase letter"
 
-    if not re.search(r"\\d", key):
+    if not re.search(r"\d", key):
         return "Need number"
 
     if not re.search(r"[!@#$%^&*]", key):
@@ -166,6 +150,7 @@ def embed_data(image_path, ciphertext, output_path):
 
     pixels = img.load()
 
+    # Capacity check
     max_capacity = img.width * img.height * 3
 
     if len(binary) > max_capacity:
@@ -305,6 +290,7 @@ def encrypt():
 
             os.remove(input_path)
 
+            # IMPORTANT: remove old flash messages
             session.pop("_flashes", None)
 
             return send_file(
@@ -369,6 +355,7 @@ def decrypt():
 
             extracted_text = plaintext
 
+            # Remove old flash errors
             session.pop("_flashes", None)
 
         except Exception:
@@ -387,12 +374,5 @@ def decrypt():
 
 # ================= RUN =================
 
-import webbrowser
-import threading
-
-def open_browser():
-    webbrowser.open("http://127.0.0.1:5000")
-
 if __name__ == "__main__":
-    threading.Timer(1, open_browser).start()
-    app.run()
+    app.run(debug=True)
