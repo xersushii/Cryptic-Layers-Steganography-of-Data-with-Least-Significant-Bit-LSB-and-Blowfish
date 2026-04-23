@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cryptic Layers</title>
+
+<style>
+
+/* PAGE */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 22px;
+    text-align: center;
+    font-size: 44px;
+    font-weight: bold;
+    border-bottom: 1px solid #e2e8f0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 
+    'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* MAIN CONTAINER */
+.container {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 50px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* TITLE */
+h1 {
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+/* DESCRIPTION */
+p {
+    color: #64748b;
+    margin-bottom: 43px;
+    font-size: 16px;
+}
+
+/* BUTTON BASE */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    margin: 18px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+/* ENCRYPT BUTTON */
+.encrypt {
+    background: #2563eb;
+}
+
+.encrypt:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* DECRYPT BUTTON */
+.decrypt {
+    background: #8b5cf6;
+}
+
+.decrypt:hover {
+    background: #7c3aed;
+    transform: translateY(-2px);
+}
+
+/* OPTIONAL FOOTER STYLE */
+.footer {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+Cryptic Layers
+</header>
+
+<div class="container">
+    <div class="card">
+
+        <h1>Steganography of Data with Least Significant Bit (LSB) and Blowfish</h1>
+
+        <p>
+            Encrypt your message using Blowfish and conceal it using
+            Least Significant Bit (LSB) steganography.
+        </p>
+
+        <button class="btn encrypt"
+        onclick="location.href='/encrypt'">
+             Encrypt and Hide
+        </button>
+
+        <button class="btn decrypt"
+        onclick="location.href='/decrypt'">
+            Extract and Decrypt
+        </button>
+
+        <div class="footer">
+            Secure • Private • Reliable
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
