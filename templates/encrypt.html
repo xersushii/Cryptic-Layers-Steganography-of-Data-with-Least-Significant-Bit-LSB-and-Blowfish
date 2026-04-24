@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Encrypt Message - Cryptic Layers</title>
+
+<meta charset="UTF-8">
+<title>Decrypt - Cryptic Layers</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<style>
-/* ====== SOURCE CODE FOR ENCRYPT PAGE UI ====== */
 
-body {
+
+<style>
+
+/* ====== SOURCE CODE FOR DECRYPT PAGE UI ======*/
+
+/* ====== DECRYPT PAGE UI ====== */body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: #f1f5f9;   
+    background: #f1f5f9;
     color: #0f172a;
 }
 
 /* HEADER */
+
 header {
     background: white;
     padding: 22px;
@@ -27,6 +33,7 @@ header {
 }
 
 /* CONTAINER */
+
 .container {
     max-width: 700px;
     margin: 60px auto;
@@ -34,16 +41,23 @@ header {
 }
 
 /* CARD */
+
 .card {
-    background: #e5e7eb;  
+    background: #e5e7eb;
     padding: 35px;
     border-radius: 15px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.08);
 }
 
 /* TITLE */
+
 h2 {
     margin-bottom: 12px;
+}
+
+h2 i {
+    margin-right: 8px;
+    color: #475569;
 }
 
 .subtitle {
@@ -53,6 +67,7 @@ h2 {
 }
 
 /* INPUTS */
+
 label {
     display: block;
     margin-top: 15px;
@@ -60,41 +75,34 @@ label {
     font-size: 17px;
 }
 
-/* INPUT STYLE */
-textarea,
-input {
+input,
+textarea {
     width: 100%;
+    box-sizing: border-box;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
-    background: white;    
+    background: white;
     color: black;
     font-size: 16px;
-    box-sizing: border-box;
 }
 
-/* PASSWORD CONTAINER */
-.password-container {
-    position: relative;
+/* ERROR INPUT */
+
+.input-error {
+    border: 2px solid #dc2626 !important;
 }
 
-/* EYE BUTTON */
-.toggle-eye {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #64748b;
-    font-size: 18px;
-}
+/* TEXTAREA */
 
-/* FILE INPUT */
-input[type="file"] {
-    background: white;
+textarea {
+    resize: vertical;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 /* BUTTON */
+
 button {
     width: 100%;
     padding: 18px;
@@ -103,7 +111,7 @@ button {
     border-radius: 15px;
     font-weight: bold;
     font-size: 15px;
-    background: #2563eb;   
+    background: #2563eb;
     color: white;
     cursor: pointer;
     transition: 0.3s;
@@ -114,6 +122,7 @@ button:hover {
 }
 
 /* BACK BUTTON */
+
 .back {
     margin-top: 17px;
     background: #64748b;
@@ -123,88 +132,209 @@ button:hover {
     background: #475569;
 }
 
-/* MESSAGE */
-.message {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
+/* RESULT BOX */
+
+.result {
+    margin-top: 20px;
     background: #f8fafc;
-    font-size: 21px;
+    padding: 15px;
+    border-radius: 10px;
 }
 
-.success {
-    color: #16a34a;
+/* MESSAGE BOX */
+
+.message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    transition: opacity 0.3s ease;
 }
 
 .error {
     color: #dc2626;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
 }
+
+.success {
+    color: #16a34a;
+    background: #ecfdf5;
+    border: 1px solid #86efac;
+}
+
 </style>
+
+<script>
+
+/* FILE VALIDATION */
+
+function validateEncryptedFile() {
+
+    const fileInput = document.querySelector('input[name="image"]');
+    const file = fileInput.files[0];
+
+    if (!file) return true;
+
+    const fileName = file.name.toLowerCase();
+
+    if (
+        !fileName.endsWith(".png") &&
+        !fileName.endsWith(".jpg") &&
+        !fileName.endsWith(".jpeg")
+    ) {
+
+        alert("❌ Only PNG, JPG, and JPEG files are allowed.");
+
+        fileInput.classList.add("input-error");
+        fileInput.value = "";
+
+        return false;
+    }
+
+    const isEncrypted =
+        fileName.includes("encrypted") ||
+        fileName.endsWith(".enc.png") ||
+        fileName.endsWith(".enc.jpg") ||
+        fileName.endsWith(".enc.jpeg");
+
+    if (!isEncrypted) {
+
+        alert(
+            "❌ Only encrypted images are allowed.\n\n" +
+            "Please upload an encrypted image file."
+        );
+
+        fileInput.classList.add("input-error");
+        fileInput.value = "";
+
+        return false;
+    }
+
+    fileInput.classList.remove("input-error");
+
+    return true;
+}
+
+/* REMOVE FLASH MESSAGE WHEN USER TYPES */
+
+function removeFlashMessage() {
+
+    const flash = document.getElementById("flashMessage");
+
+    if (flash) {
+
+        flash.style.opacity = "0";
+
+        setTimeout(function () {
+            flash.remove();
+        }, 300);
+
+    }
+
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const inputs = document.querySelectorAll(
+        "input, textarea"
+    );
+
+    inputs.forEach(function (input) {
+
+        input.addEventListener("input", removeFlashMessage);
+        input.addEventListener("change", removeFlashMessage);
+
+    });
+
+});
+
+</script>
 
 </head>
 
 <body>
 
-<header>Cryptic Layers</header>
+<header>
+Cryptic Layers
+</header>
 
 <div class="container">
 <div class="card">
 
 <h2>
-<i class="fa-solid fa-lock"></i>
-1. Encrypt & Hide
+<i class="fa-solid fa-unlock"></i>
+2. Extract & Decrypt
 </h2>
 
 <p class="subtitle">
-Encrypt your message using Blowfish and conceal it inside an image using LSB.
+Extract hidden data from the image and decrypt it using the provided key.
 </p>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST"
+      enctype="multipart/form-data"
+      onsubmit="return validateEncryptedFile()">
 
-<label>Secret Message</label>
-<textarea name="plaintext" rows="5" required></textarea>
+<label>Select Encrypted Image</label>
 
-<label>Secret Key</label>
-
-<div class="password-container">
 <input
-    type="password"
-    name="key"
-    id="secretKey"
+    type="file"
+    name="image"
+    accept=".png,.jpg,.jpeg"
     required
 >
 
-<i
-    class="fa-solid fa-eye toggle-eye"
-    onclick="togglePassword()"
-    id="eyeIcon"
-></i>
-</div>
+<label>Secret Key</label>
 
-<label>Select Cover Image</label>
-<input type="file" name="image" required>
+<input
+    type="text"
+    name="key"
+    required
+>
+
 
 <button type="submit">
-Embed Data & Download Stego Image
+Extract Hidden Data
 </button>
 
 </form>
 
-{% if message %}
-<div class="message success">
-{{ message }}
-</div>
-{% endif %}
+<!-- FLASH ERROR MESSAGE -->
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-{% for msg in messages %}
-<div class="message error">
-{{ msg }}
-</div>
-{% endfor %}
+    {% for msg in messages %}
+        <div id="flashMessage" class="message error">
+            {{ msg }}
+        </div>
+    {% endfor %}
 {% endif %}
 {% endwith %}
+
+<!-- SUCCESS MESSAGE -->
+
+{% if extracted_text %}
+<div class="message success">
+Decryption Successful
+</div>
+{% endif %}
+
+<!-- RESULT -->
+
+{% if extracted_text %}
+<div class="result">
+
+<strong>Decrypted Message:</strong>
+
+<br><br>
+
+<textarea rows="5" readonly>
+{{ extracted_text }}
+</textarea>
+
+</div>
+{% endif %}
 
 <button class="back" onclick="location.href='/'">
 ← Back to Home
@@ -213,28 +343,6 @@ Embed Data & Download Stego Image
 </div>
 </div>
 
-<script>
-function togglePassword() {
-
-    var passwordField =
-    document.getElementById("secretKey");
-
-    var eyeIcon =
-    document.getElementById("eyeIcon");
-
-    if (passwordField.type === "password") {
-        passwordField.type = "text";
-        eyeIcon.classList.remove("fa-eye");
-        eyeIcon.classList.add("fa-eye-slash");
-    }
-    else {
-        passwordField.type = "password";
-        eyeIcon.classList.remove("fa-eye-slash");
-        eyeIcon.classList.add("fa-eye");
-    }
-
-}
-</script>
-
 </body>
 </html>
+
