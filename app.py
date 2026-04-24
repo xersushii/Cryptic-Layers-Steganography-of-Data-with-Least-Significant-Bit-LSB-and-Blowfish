@@ -5,8 +5,7 @@ from flask import (
     send_file,
     flash,
     redirect,
-    url_for,
-    session
+    url_for
 )
 
 from Crypto.Cipher import Blowfish
@@ -24,10 +23,15 @@ import uuid
 app = Flask(__name__)
 app.secret_key = "cryptic_layer_secret"
 
-# ================= UPLOAD FOLDER =================
+# ================= SAFE UPLOAD FOLDER =================
 
-UPLOAD_FOLDER = "uploads"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # ================= FILE VALIDATION =================
 
@@ -119,6 +123,7 @@ def blowfish_decrypt(ciphertext, password):
     raw = base64.b64decode(ciphertext)
 
     salt = raw[:16]
+
     encrypted = raw[16:]
 
     key = derive_secure_key(password, salt)
@@ -150,14 +155,11 @@ def embed_data(image_path, ciphertext, output_path):
 
     pixels = img.load()
 
-    # Capacity check
     max_capacity = img.width * img.height * 3
 
     if len(binary) > max_capacity:
-
         raise ValueError(
-            "Image too small to hold the encrypted data. "
-            "Please use a larger image."
+            "Image too small to hold the encrypted data."
         )
 
     index = 0
@@ -168,6 +170,7 @@ def embed_data(image_path, ciphertext, output_path):
             pixel = list(pixels[x, y])
 
             for i in range(3):
+
                 if index < len(binary):
 
                     pixel[i] = (
@@ -253,7 +256,6 @@ def encrypt():
             flash(
                 "Only valid PNG, JPG, JPEG images allowed."
             )
-
             return redirect(url_for("encrypt"))
 
         error = validate_key(key)
@@ -264,12 +266,12 @@ def encrypt():
             return redirect(url_for("encrypt"))
 
         input_path = os.path.join(
-            UPLOAD_FOLDER,
+            app.config["UPLOAD_FOLDER"],
             f"{uuid.uuid4()}.png"
         )
 
         output_path = os.path.join(
-            UPLOAD_FOLDER,
+            app.config["UPLOAD_FOLDER"],
             f"encrypted_{uuid.uuid4()}.png"
         )
 
@@ -289,9 +291,6 @@ def encrypt():
             )
 
             os.remove(input_path)
-
-            # IMPORTANT: remove old flash messages
-            session.pop("_flashes", None)
 
             return send_file(
                 output_path,
@@ -332,11 +331,10 @@ def decrypt():
             flash(
                 "Only valid PNG, JPG, JPEG allowed."
             )
-
             return redirect(url_for("decrypt"))
 
         image_path = os.path.join(
-            UPLOAD_FOLDER,
+            app.config["UPLOAD_FOLDER"],
             f"{uuid.uuid4()}.png"
         )
 
@@ -354,9 +352,6 @@ def decrypt():
             )
 
             extracted_text = plaintext
-
-            # Remove old flash errors
-            session.pop("_flashes", None)
 
         except Exception:
 
